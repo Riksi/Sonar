@@ -27,6 +27,8 @@ contract ModelRepository {
 
   struct Model {
 
+    bytes32 name;
+
     address owner;
 
     IPFS initialWeights;
@@ -53,13 +55,16 @@ contract ModelRepository {
     assert(receiver.send(amount));
   }
 
-  function addModel(bytes32[] weights, uint initialError, uint targetError) payable {
+  function addModel(bytes32 name, bytes32[] weights, uint initialError, uint targetError) payable {
 
     IPFS memory ipfsWeights;
     ipfsWeights.first = weights[0];
     ipfsWeights.second = weights[1];
 
     Model memory newModel;
+
+    newModel.name = name;
+
     newModel.weights = ipfsWeights;
     newModel.initialWeights = ipfsWeights;
 
@@ -154,7 +159,7 @@ contract ModelRepository {
     }
   }
 
-  function getModel(uint modelId) constant returns (address,uint,uint,uint,bytes32[]) {
+  function getModel(uint modelId) constant returns (bytes32, address,uint,uint,uint,bytes32[]) {
     Model memory currentModel;
     currentModel = models[modelId];
     bytes32[] memory weights = new bytes32[](2);
@@ -162,7 +167,7 @@ contract ModelRepository {
     weights[0] = currentModel.weights.first;
     weights[1] = currentModel.weights.second;
 
-    return (currentModel.owner, currentModel.bounty, currentModel.initialError, currentModel.targetError, weights);
+    return (currentModel.name, currentModel.owner, currentModel.bounty, currentModel.initialError, currentModel.targetError, weights);
   }
 
 }
